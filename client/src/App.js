@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-notifications/lib/notifications.css';
 import { io } from 'socket.io-client';
@@ -14,19 +14,21 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
+  const [chats, setChats] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // useEffect(() => {
-  //   if(socket){
-  //     socket.on('connect', () => {
-  //       if(socket.connected){
-  //         console.log('connected')
-  //         setIsLoggedIn(true);
-  //       }
-  //     })
-  //   }
-  // })
+  useLayoutEffect(() => {
+    localStorage.clear('user');
+  },[])
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(user){
+      setCurrentUser(user);
+      onConnect(user);
+      setIsLoggedIn(true);
+    }
+  },[]);
   const onConnect = (user) => {
     const soc = io('http://localhost:5000').connect()
     if (soc) {
@@ -36,8 +38,11 @@ const App = () => {
         NotificationManager.error(error.message, "Login Error:")
       })
       setSocket(soc)
+      localStorage.setItem('user', JSON.stringify(user));
+      setIsLoggedIn(true);
     }
   }
+
   return (
     <div className="App">
       <Context.Provider
@@ -50,11 +55,13 @@ const App = () => {
           users,
           setUsers,
           currentUser,
-          setCurrentUser
+          setCurrentUser,
+          chats,
+          setChats
         }}
       >
         {
-          !socket ?
+          !isLoggedIn ?
             <Login />
             :
             <Chat />

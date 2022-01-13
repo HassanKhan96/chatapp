@@ -5,7 +5,14 @@ const UserSchema = new Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
     avatar: { type: String, default: null },
-    status: { type: String, default: 'offline'}
+    status: { type: String, default: 'offline' },
+    chats: [{
+        type: {
+            userId: Schema.Types.ObjectId,
+            chatId: Schema.Types.ObjectId
+        },
+        default: []
+    }]
 });
 
 module.exports = mongoose.model('user', UserSchema);

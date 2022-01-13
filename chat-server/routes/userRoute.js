@@ -28,6 +28,7 @@ router.post('/login', async (req, res) => {
             id: user._id,
             username: user.username,
             avatar: user.avatar,
+            chat: user.chats,
             token,
         })
     }
@@ -65,6 +66,7 @@ router.post('/signup', async (req, res) => {
             id: newUser._id,
             username: newUser.username,
             avatar: newUser.avatar,
+            chats: newUser.chats,
             token,
         })
     }

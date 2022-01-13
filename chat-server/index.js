@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const userRoute = require('./routes/userRoute');
 const mongoose = require('mongoose');
 const User = require('./models/User');
+const Chat = require('./models/Chat');
 const jwt = require('jsonwebtoken');
 
 mongoose.connect(
@@ -50,28 +51,55 @@ io.on('connection', async (socket) => {
         users.push({
             ...userSocket.user,
             status: 'online',
-            chat: []
         });
     }
     socket.emit('users', users)
 
     socket.broadcast.emit('user_connected', {
         ...socket.user,
-        status: 'online',
-        chat: []
+        status: 'online'
     })
 
-    socket.on('private_message', payload => {
-        socket.to(payload.data.receiver.id).emit('private_message', payload.data)
+    socket.on('private_message', async payload => {
+        //socket.to(payload.data.receiver.id).emit('private_message', payload.data);\
+        const { data } = payload;
+        try{
+            const chatExists = await Chat.findOne({ _id: data._id});
+            if(!chatExists){
+                const chat = await new Chat({
+                    _id: data._id,
+                    refs: data.refs,
+                    messages: [{
+                        content: data.content,
+                        sender: data.sender,
+                        receiver: data.receiver
+                    }]
+                });
+                const savedChat = await chat.save();
+                socket.to(data.receiver).emit('private_message', savedChat);
+            }
+            else{
+                chatExists.messages.push({
+                    content: data.content,
+                    sender: data.sender,
+                    receiver: data.receiver
+                });
+                const savedChat = await chatExists.save();
+                socket.to(data.receiver).emit('private_message', savedChat);
+            }
+            
+        }
+        catch(error){
+            console.log(error);
+        }
     })
 
     socket.on('disconnect', async () => {
         console.log(socket.id, "Disconnected");
-        const diconnectedUser = await User.findOneAndUpdate({ _id: socket.id}, {status: 'offline'});
+        const diconnectedUser = await User.findOneAndUpdate({ _id: socket.id}, {status: 'offline'}, {new: true});
         socket.broadcast.emit('user_disconnected', {
             ...socket.user,
             status: diconnectedUser.status,
-            chat: []
         })
     })
 })
