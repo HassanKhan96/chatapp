@@ -5,6 +5,7 @@ const http = require("http").createServer(app);
 const { Server } = require("socket.io");
 const bodyParser = require('body-parser');
 const userController = require('./controllers/user.controller');
+const chatController = require('./controllers/chat.controller');
 const mongoose = require('mongoose');
 
 mongoose.connect(
@@ -14,7 +15,7 @@ mongoose.connect(
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/user', userController);
+app.use('/api', userController);
 
 const io = new Server(http, {
     cors: {
@@ -22,7 +23,11 @@ const io = new Server(http, {
     }
 });
 
+io.use((socket) => {
+    console.log(socket);
+})
 
+io.on('connection', chatController)
 
 http.listen(5000, () => {
     console.log("Server started.");

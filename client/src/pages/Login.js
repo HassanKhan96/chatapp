@@ -1,47 +1,28 @@
-import './Login.css';
+import './css/Login.css';
 import { Form, Button } from 'react-bootstrap';
 import { useState, useContext, useEffect } from 'react';
-import Context from './Context/Context';
-import axios from 'axios';
-import { NotificationManager } from 'react-notifications';
+import { useDispatch } from 'react-redux';
+import { login } from '../store/action/authActions';
 
 const Login = () => {
+    const [userCred, setUserCred] = useState({ username: '', password: '' })
     const [validated, setValidated] = useState(false);
-    const {
-        userCred,
-        setUserCred,
-        onConnect,
-        setCurrentUser
-    } = useContext(Context);
+    const dispatch = useDispatch();
 
     const handleSubmit = async (event) => {
-        try {
-            const form = event.currentTarget;
-            if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else {
-                event.preventDefault();
-                const res = await axios.post(
-                    'http://localhost:5000/user/login',
-                    { 
-                        username: userCred.username, 
-                        password: userCred.password
-                    }
-                )
-                setCurrentUser(res.data)
-                onConnect(res.data)
-            }
-            setValidated(true);
+        const form = event.currentTarget;
+        event.preventDefault();
+        
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
         }
-        catch (error) {
-            NotificationManager.error('Wrong username or password', 'Login Error');
-            console.log(error)
+        else {
+            dispatch(login(userCred))
         }
+        setValidated(true);
     };
 
-    
+
     return (
         <div className="login-container">
 
