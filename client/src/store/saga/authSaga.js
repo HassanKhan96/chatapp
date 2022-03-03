@@ -5,10 +5,10 @@ function* onLogin({ username, password}){
     console.log(username, password)
 }
 
-function* watchAll(){
+function* authSaga(){
     yield all([
         takeEvery(GET_AUTH, onLogin)
     ])
 }
 
-export default watchAll;
+export default authSaga;
