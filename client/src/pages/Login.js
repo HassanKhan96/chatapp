@@ -1,13 +1,14 @@
 import './css/Login.css';
 import { Form, Button } from 'react-bootstrap';
 import { useState, useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '../store/action/authActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { onAuth } from '../store/action/authActions';
 
 const Login = () => {
     const [userCred, setUserCred] = useState({ username: '', password: '' })
     const [validated, setValidated] = useState(false);
     const dispatch = useDispatch();
+    useSelector(state => console.log(state))
 
     const handleSubmit = async (event) => {
         const form = event.currentTarget;
@@ -17,7 +18,7 @@ const Login = () => {
             event.stopPropagation();
         }
         else {
-            dispatch(login(userCred))
+            dispatch(onAuth(userCred))
         }
         setValidated(true);
     };
