@@ -1,5 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './scss/custom.scss';
 import 'react-notifications/lib/notifications.css';
 import { Provider } from 'react-redux';
 import Navigator from './navigator/Navigator';

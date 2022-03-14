@@ -1,16 +1,20 @@
-import "./chat.css";
-import ChatList from "./chatList/ChatList";
-import ChatContent from "./chatContent/ChatContent";
-import UserProfile from "./userProfile/UserProfile";
+import './Chat.css';
+import UserSection from './usersSection/UserSection';
+import ChatSection from './chatSection/ChatSection';
 
-const Chat  = () => { 
+const Chat = () => {
     return (
-      <div className="main__chatbody">
-        <ChatList />
-        <ChatContent />
-        <UserProfile />
-      </div>
-    );
+        <div className="container-fluid height100">
+            <div className='row h-100'>
+                <div className='col-3 p-0'>
+                    <UserSection />
+                </div>
+                <div className='col-8 p-0'>
+                    <ChatSection />
+                </div>
+            </div>
+        </div>
+    )
 }
 
-export default Chat;
+export default Chat

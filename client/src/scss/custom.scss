@@ -1,0 +1,11 @@
+$theme-colors: (
+  "primary": #FCF8FF,
+  "secondary": #6948BC,
+  "success": #37C190,
+  "danger": #FF626A
+);
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Roboto&display=swap');;
+
+// Import Bootstrap and its default variables
+@import '~bootstrap/scss/bootstrap.scss';
